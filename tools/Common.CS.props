@@ -1,0 +1,37 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Project>
+
+  <PropertyGroup>
+    <EnableNETAnalyzers>true</EnableNETAnalyzers>
+    <AnalysisLevel>9.0</AnalysisLevel>
+    <AnalysisMode>AllEnabledByDefault</AnalysisMode>
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+    <EnableTrimAnalzyer>true</EnableTrimAnalzyer>
+    <ProduceReferenceAssembly>true</ProduceReferenceAssembly>
+
+    <IsCLSCompliant>false</IsCLSCompliant>
+    
+    <IsUtils>false</IsUtils>
+    <NoUtils>false</NoUtils>
+
+    <Configuration Condition="'$(Configuration)' == ''">Debug</Configuration>
+
+    <Configurations>Debug;Release</Configurations>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Net.Compilers.Toolset" Version="$(RoslynVersion)" IsImplicitlyDefined="true" Pack="false" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.CodeStyle" Version="$(RoslynVersion)" IsImplicitlyDefined="true" Pack="false" PrivateAssets="all" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(Tests)' == 'true' or '$(IsTestProject)' == 'true'">
+    <PackageReference Include="xunit.v3" Version="2.0.0" IsImplicitlyDefined="true" />
+    <PackageReference Include="xunit.analyzers" Version="1.20.0" IsImplicitlyDefined="true" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="3.0.2" IsImplicitlyDefined="true" />
+    <PackageReference Include="coverlet.collector" Version="6.0.4" IsImplicitlyDefined="true">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>  
+
+</Project>

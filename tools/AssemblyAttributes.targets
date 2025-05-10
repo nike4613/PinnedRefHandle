@@ -1,0 +1,69 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Project>
+
+  <ItemGroup>
+    <LiteralAssemblyAttribute Include="global::System.CLSCompliantAttribute" Condition="'$(IsCLSCompliant)' != ''">
+      <_Parameters>$(IsCLSCompliant)</_Parameters>
+    </LiteralAssemblyAttribute>
+  </ItemGroup>
+
+  <Target Name="AddInternalsVisibleTo" BeforeTargets="BeforeCompile">
+    <!-- Add default suffix if there is no InternalsVisibleTo or InternalsVisibleToSuffix defined -->
+    <ItemGroup Condition="@(InternalsVisibleToSuffix->Count()) == 0 AND @(InternalsVisibleTo->Count()) == 0">
+      <!--<InternalsVisibleToSuffix Include=".Tests" />-->
+    </ItemGroup>
+
+    <!-- Handle InternalsVisibleTo -->
+    <ItemGroup Condition="'@(InternalsVisibleTo->Count())' &gt; 0">
+      <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
+        <_Parameter1>%(InternalsVisibleTo.Identity)</_Parameter1>
+      </AssemblyAttribute>
+    </ItemGroup>
+
+    <!-- Handle InternalsVisibleToSuffix -->
+    <ItemGroup Condition="@(InternalsVisibleToSuffix->Count()) &gt; 0">
+      <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
+        <_Parameter1>$(AssemblyName)%(InternalsVisibleToSuffix.Identity)</_Parameter1>
+      </AssemblyAttribute>
+    </ItemGroup>
+  </Target>
+
+  <PropertyGroup>
+    <_LiteralAssemblyFile Condition="'$(Language)' == 'C#'">$(IntermediateOutputPath)LiteralAssemblyAttributes.cs</_LiteralAssemblyFile>
+    <CoreCompileDependsOn>
+      EnsureSupportedMSBuildVersion;
+      AddLiteralAssemblyAttributes;
+      $(CoreCompileDependsOn);
+    </CoreCompileDependsOn>
+  </PropertyGroup>
+
+  <Target Name="EnsureSupportedMSBuildVersion"
+          BeforeTargets="CoreCompile"
+          Condition="'$(MSBuildRequiredVersion)' != ''">
+    <Error Code="VN0001" ContinueOnError="false" Text="MSBuild version is too old to build this project; currently $(MSBuildVersion) needs at least $(MSBuildRequiredVersion)"
+           Condition="$([MSBuild]::VersionLessThan('$(MSBuildVersion)', '$(MSBuildRequiredVersion)'))" />
+  </Target>
+
+  <Target Name="AddLiteralAssemblyAttributes"
+          BeforeTargets="CoreCompile"
+          Condition="'$(Language)' == 'C#'"
+          Inputs="$(MSBuildAllProjects)"
+          Outputs="$(_LiteralAssemblyFile)">
+
+    <ItemGroup>
+      <Compile Include="$(_LiteralAssemblyFile)" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <_LiteralAssemblyAttrDecls Include="// &lt;auto-generated /&gt;" />
+      <_LiteralAssemblyAttrDecls Include="extern alias %(LiteralAssemblyAttributeExternAlias.Identity);"
+                                 Condition="'%(LiteralAssemblyAttributeExternAlias.Identity)' != ''" />
+      <_LiteralAssemblyAttrDecls Include="[assembly: %(LiteralAssemblyAttribute.Identity)(%(LiteralAssemblyAttribute._Parameters))]"
+                                 Condition="'%(LiteralAssemblyAttribute.Identity)' != ''" />
+    </ItemGroup>
+
+    <WriteLinesToFile File="$(_LiteralAssemblyFile)" Encoding="UTF-8" Lines="@(_LiteralAssemblyAttrDecls)" Overwrite="true" />
+
+  </Target>
+
+</Project>

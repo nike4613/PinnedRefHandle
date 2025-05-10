@@ -1,0 +1,10 @@
+{
+  "sdk": {
+    "rollForward": "latestPatch",
+    "version": "9.0.203"
+  },
+  "msbuild-sdks": {
+    "Microsoft.Build.NoTargets": "3.7.56",
+    "Microsoft.NET.Sdk.IL": "9.0.4"
+  }
+}

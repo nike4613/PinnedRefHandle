@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project>
+
+  <PropertyGroup>
+    <PackageId>$(MSBuildProjectName)</PackageId>
+    <Authors>DaNike</Authors> <!-- Note: With dotnet pack, <Authors> is also the list of owners. -->
+    <VersionPrefix>1.0.0</VersionPrefix> <!-- Devbuild (version hasn't been set) -->
+    <VersionSuffix Condition="'$(VersionSuffix)' == '' and '$(DoNotAddSuffix)' == ''">alpha.dev</VersionSuffix>
+    
+    <Copyright>Copyright $([System.DateTime]::Now.ToString(yyyy)) $(Authors)</Copyright>
+    <PackageTags>$(PackageTags)</PackageTags>
+    <PackageLicenseExpression></PackageLicenseExpression>
+    <Repository></Repository>
+    <PackageProjectUrl></PackageProjectUrl>
+
+    <PackageIcon></PackageIcon>
+    <PackageIconUrl></PackageIconUrl>
+
+  </PropertyGroup>
+
+  <!-- We have literally no reason not to use SourceLink -->
+  <PropertyGroup>
+    <!-- https://github.com/dotnet/sourcelink -->
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+  </PropertyGroup>
+  
+  <ItemGroup>
+    <!-- SourceLink -->
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0" IsImplicitlyDefined="true">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+    </PackageReference>
+    <!-- NuGetizer for better control over NuGet package generation with dotnet pack -->
+    <PackageReference Include="NuGetizer" Version="1.2.4" IsImplicitlyDefined="true">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+  
+  <!-- Package Validation -->
+  <PropertyGroup>
+    <EnablePackageValidation>true</EnablePackageValidation>
+  </PropertyGroup>
+
+</Project>

@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Project>
+
+  <PropertyGroup Condition="'$(NoAutomaticReferences)' == 'true'">
+    <NoUtils>true</NoUtils>
+    <AutomaticPackages>false</AutomaticPackages>
+  </PropertyGroup>
+
+  <ItemGroup Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework'">
+    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.3" IsImplicitlyDefined="true"/>
+  </ItemGroup>
+
+  <!-- Include the language-specific targets file, if it exists -->
+  <Import Project="$(_LanguageTargets)" Condition="Exists('$(_LanguageTargets)')" />
+  
+</Project>

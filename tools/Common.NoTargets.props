@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Project>
+
+  <PropertyGroup>
+    <TargetFrameworks></TargetFrameworks>
+    <TargetFramework>net8.0</TargetFramework>
+    <IsPackable>false</IsPackable>
+    <EnableDefaultItems>false</EnableDefaultItems>
+	  <AutomaticPackages>false</AutomaticPackages>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="**/*" />
+    <None Remove="$(MSBuildProjectFullPath)" />
+  </ItemGroup>
+
+</Project>

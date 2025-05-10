@@ -1,0 +1,32 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Project>
+
+  <PropertyGroup>
+    <_RootDirectory>$(MSBuildThisFileDirectory)..\</_RootDirectory>
+    <_SrcDirectory>$(_RootDirectory)src\</_SrcDirectory>
+    <_ToolsDirectory>$(MSBuildThisFileDirectory)</_ToolsDirectory>
+    <_ArtifactsDirectory>$(_RootDirectory)artifacts\</_ArtifactsDirectory>
+    <_ExternalDirectory>$(_RootDirectory)external\</_ExternalDirectory>
+  
+    <UseArtifactsOutput>true</UseArtifactsOutput>
+    <ArtifactsPath>$(_ArtifactsDirectory)</ArtifactsPath>
+
+    <AppendTargetFrameworkToOutputPath>true</AppendTargetFrameworkToOutputPath>
+    <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
+
+    <AutomaticPackages>true</AutomaticPackages>
+  </PropertyGroup>
+
+  <!-- Project Language information -->
+  <PropertyGroup>
+    <_ProjectLanguage>Unknown</_ProjectLanguage>
+    <_ProjectLanguage Condition="'$(MSBuildProjectExtension)' == '.csproj'">CS</_ProjectLanguage>
+    <_ProjectLanguage Condition="'$(MSBuildProjectExtension)' == '.ilproj'">IL</_ProjectLanguage>
+    <_ProjectLanguage Condition="'$(UsingMicrosoftNoTargetsSdk)' == 'true'">NoTargets</_ProjectLanguage>
+    <_LanguageProps>$(_ToolsDirectory)Common.$(_ProjectLanguage).props</_LanguageProps>
+    <_LanguageTargets>$(_ToolsDirectory)Common.$(_ProjectLanguage).targets</_LanguageTargets>
+  </PropertyGroup>
+  
+  <Import Project="$(_LanguageProps)" Condition="Exists('$(_LanguageProps)')" />
+
+</Project>

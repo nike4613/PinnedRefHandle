@@ -1,0 +1,39 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project>
+
+  <!-- IL-specific properties -->
+  <PropertyGroup>
+    <Optimize>false</Optimize>
+    <Optimize Condition="'$(Configuration)' == 'Release'">true</Optimize>
+    
+    <!-- Make sure that the DebuggableAttribute is set properly. -->
+    <DebugOptimization>IMPL</DebugOptimization>
+    <DebugOptimization Condition="'$(Optimize)' == 'true'">OPT</DebugOptimization>
+    <CoreCompileDependsOn>$(CoreCompileDependsOn);GenerateVersionFile</CoreCompileDependsOn>
+    <IlasmFlags>$(IlasmFlags) -DEBUG=$(DebugOptimization)</IlasmFlags>
+    <IlasmFlags Condition="'$(Optimize)' == 'true'">$(IlasmFlags) -OPTIMIZE -FOLD</IlasmFlags>
+    <IsPackable>false</IsPackable>
+    <ProduceReferenceAssembly>false</ProduceReferenceAssembly>
+    <IsNetCoreOrStandard>false</IsNetCoreOrStandard>
+
+    <!-- If we're building for .NET 3.5, we need to manually set the version string so the runtime will load it. -->
+    <RuntimeMetadataVersion>v4.0.30319</RuntimeMetadataVersion>
+    <RuntimeMetadataVersion Condition="'$(TargetFramework)' == 'net35'">v2.0.50727</RuntimeMetadataVersion>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="$([MSBuild]::GetTargetFrameworkIdentifier('$(TargetFramework)')) == '.NETCoreApp'">
+    <DefineConstants>netcoreapp;$(DefineConstants)</DefineConstants>
+    <CoreAssembly>System.Runtime</CoreAssembly>
+    <IsNetCoreOrStandard>true</IsNetCoreOrStandard>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="$([MSBuild]::GetTargetFrameworkIdentifier('$(TargetFramework)')) == '.NETStandard'">
+    <CoreAssembly>netstandard</CoreAssembly>
+    <IsNetCoreOrStandard>true</IsNetCoreOrStandard>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="$([MSBuild]::GetTargetFrameworkIdentifier('$(TargetFramework)')) == '.NETFramework'">
+    <CoreAssembly>mscorlib</CoreAssembly>
+  </PropertyGroup>
+
+</Project>

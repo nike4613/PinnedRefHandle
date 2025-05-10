@@ -1,0 +1,10 @@
+<Solution>
+  <Folder Name="/Solution Items/">
+    <Project Path="tools/tools.csproj" />
+    <File Path=".editorconfig" />
+    <File Path="Directory.Build.props" />
+    <File Path="Directory.Build.rsp" />
+    <File Path="Directory.Build.targets" />
+  </Folder>
+  <Project Path="src/PinnedRefHandle/PinnedRefHandle.csproj" />
+</Solution>
