@@ -365,6 +365,12 @@ internal sealed unsafe class ThreadListData
 
     public object AddPin(void* ptr)
     {
+        if (AuxList is { } aux && aux.Count < Count)
+        {
+            // the aux list has been allocated, and has fewer items; shell off to it for balance
+            return aux.AddPin(ptr);
+        }
+
         // TODO: pool ManualResetEvent? AddPinnedRecord?
         using var mre = new ManualResetEventSlim();
         var rec = new AddPinnedRecord((nint)ptr, mre);
