@@ -80,8 +80,21 @@ internal sealed unsafe class ThreadListData
         {
             _ = Interlocked.CompareExchange(ref AuxList, new(), null);
             tl = AuxList;
-            tl.StartThread();
             tl.AuxList = this; // aux lists are mutual
+            tl.StartThread();
+        }
+        return tl;
+    }
+
+    private ThreadListData GetContinueList()
+    {
+        var tl = ContinueList;
+        if (tl is null)
+        {
+            _ = Interlocked.CompareExchange(ref ContinueList, new(), null);
+            tl = ContinueList;
+            tl.AuxList = GetAuxList(); // the continue list should have the same aux list as ourselves
+            tl.StartThread();
         }
         return tl;
     }
@@ -211,7 +224,7 @@ internal sealed unsafe class ThreadListData
                         }
 
                         // otherwise, push to the continuation list
-                        var list2 = InterlockedInitialize(ref data.ContinueList);
+                        var list2 = data.GetContinueList();
                         list2.AddChannel.Add(addRecord);
                         list2.EventsAvailable.Set();
                         continue;
@@ -252,7 +265,7 @@ internal sealed unsafe class ThreadListData
                         // there's not enough stack! push to another thread
 
                         // do NOT push to the aux list, as this probably came from there. We need to instead push off to the continuation.
-                        var list2 = InterlockedInitialize(ref data.ContinueList);
+                        var list2 = data.GetContinueList();
                         list2.TakeOwnChannel.Add(takeOwn);
                         list2.EventsAvailable.Set();
                         continue;
