@@ -9,6 +9,8 @@ public static unsafe class PinManager
 
     public static void RemovePin(object pin)
     {
+        ArgumentNullException.ThrowIfNull(pin);
+
         using var mre = new ManualResetEventSlim();
         ThreadListData.RemovePin(pin, mre);
         mre.Wait();
