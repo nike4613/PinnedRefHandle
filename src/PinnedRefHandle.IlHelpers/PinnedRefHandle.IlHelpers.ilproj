@@ -1,0 +1,14 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.IL">
+
+  <PropertyGroup>
+    <TargetFrameworks>net9.0</TargetFrameworks>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="Assembly.il" />
+    <Compile Include="Types.il" />
+    <Compile Include="Helpers.il" />
+  </ItemGroup>
+
+</Project>

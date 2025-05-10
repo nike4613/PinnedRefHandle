@@ -16,6 +16,7 @@
 
     <Configuration Condition="'$(Configuration)' == ''">Debug</Configuration>
 
+    <RoslynVersion>4.13.0</RoslynVersion>
     <Configurations>Debug;Release</Configurations>
   </PropertyGroup>
 

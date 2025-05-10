@@ -6,5 +6,7 @@
     <File Path="Directory.Build.rsp" />
     <File Path="Directory.Build.targets" />
   </Folder>
+  <Project Path="src/PinnedRefHandle.IlHelpers/PinnedRefHandle.IlHelpers.ilproj" Type="C#" />
   <Project Path="src/PinnedRefHandle/PinnedRefHandle.csproj" />
+  <Project Path="src/TestApp/TestApp.csproj" Id="8b41b8cc-d632-43e4-9091-0242b46ce00b" />
 </Solution>

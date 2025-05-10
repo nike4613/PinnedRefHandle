@@ -1,0 +1,363 @@
+
+.method public hidebysig static void FUNC_DEF_NAME (valuetype PinnedRefHandle.IlHelpers.ListHeader* header)
+    cil managed noinlining
+{
+    .locals (
+        valuetype PinnedRefHandle.IlHelpers.ControlStatus slotmod,
+        int8& ctlresult,
+
+        // as well as the actual pinned slots
+        int8& pinned l0
+    #ifdef FUNC_GE_2
+    ,   int8& pinned l1
+    #ifdef FUNC_GE_4
+    ,   int8& pinned l2
+    ,   int8& pinned l3
+    #ifdef FUNC_GE_8
+    ,   int8& pinned l4
+    ,   int8& pinned l5
+    ,   int8& pinned l6
+    ,   int8& pinned l7
+    #endif
+    #endif
+    #endif
+    )
+
+    // prepare the pinned locals
+    ldc.i4.0
+    conv.u
+    stloc l0
+
+#ifdef FUNC_GE_2
+    ldc.i4.0
+    conv.u
+    stloc l1
+
+#ifdef FUNC_GE_4
+    ldc.i4.0
+    conv.u
+    stloc l2
+
+    ldc.i4.0
+    conv.u
+    stloc l3
+#ifdef FUNC_GE_8
+    ldc.i4.0
+    conv.u
+    stloc l4
+
+    ldc.i4.0
+    conv.u
+    stloc l5
+
+    ldc.i4.0
+    conv.u
+    stloc l6
+
+    ldc.i4.0
+    conv.u
+    stloc l7
+#endif
+#endif
+#endif
+
+    // next, prepare the calli into the control function
+
+control:
+    // the first arg is the header
+    ldarg header
+
+    // then the number of slots
+#ifdef FUNC_GE_2
+#ifdef FUNC_GE_4
+#ifdef FUNC_GE_8
+    ldc.i4 8
+#else
+    ldc.i4 4
+#endif
+#else
+    ldc.i4 2
+#endif
+#else
+    ldc.i4 1
+#endif
+
+    // then the status
+    ldloca slotmod
+
+    // and the input ref
+    ldloc ctlresult
+
+    // finally, the entrypoint
+    ldarg header
+    ldfld method int8& *(
+        valuetype PinnedRefHandle.IlHelpers.ListHeader*, // header
+        int32, // slot count
+        valuetype PinnedRefHandle.IlHelpers.ControlStatus&, // out status
+        int8& // in ref
+        ) PinnedRefHandle.IlHelpers.ListHeader::ControlFunc
+
+    // and make the calli
+    calli int8& (
+        valuetype PinnedRefHandle.IlHelpers.ListHeader*, // header
+        int32, // slot count
+        valuetype PinnedRefHandle.IlHelpers.ControlStatus&, // out status
+        int8& // in ref
+        )
+    stloc ctlresult
+    
+    ldloc slotmod
+    // now, do something based on the calli result
+    switch (control_0, control_1, control_2, control_3, control_4)
+
+    // check for a modify (read/write)
+    ldloc slotmod
+    ldc.i4 0x40000000
+    and
+    ldc.i4.0
+    ceq
+    brtrue retry_cycle // the flag is 0, jump back up immediately
+    
+    // load the index on the base of the stack
+    ldloc slotmod
+    ldc.i4 0xff
+    and
+
+    // the flag is 1, check for read or write
+    ldloc slotmod
+    ldc.i4 0x60000000
+    and
+    ldc.i4.0
+    ceq
+    brfalse write // if the flag is set, go to the write branch
+
+    // read branch
+    switch (r0, r1, r2, r3, r4, r5, r6, r7)
+    br retry_cycle
+
+r0:
+    ldloc l0
+    stloc ctlresult
+
+#ifdef FUNC_GE_2
+    br retry_cycle
+
+r1:
+    ldloc l1
+    stloc ctlresult
+    
+#ifdef FUNC_GE_4
+    br retry_cycle
+
+r2:
+    ldloc l2
+    stloc ctlresult
+    br retry_cycle
+r3:
+    ldloc l3
+    stloc ctlresult
+
+#ifdef FUNC_GE_8
+    br retry_cycle
+
+r4:
+    ldloc l4
+    stloc ctlresult
+    br retry_cycle
+r5:
+    ldloc l5
+    stloc ctlresult
+    br retry_cycle
+r6:
+    ldloc l6
+    stloc ctlresult
+    br retry_cycle
+r7:
+    ldloc l7
+    stloc ctlresult
+#else
+r4:
+r5:
+r6:
+r7:
+#endif
+#else
+r2:
+r3:
+r4:
+r5:
+r6:
+r7:
+#endif
+#else
+r1:
+r2:
+r3:
+r4:
+r5:
+r6:
+r7:
+#endif
+
+    br retry_cycle
+write:
+    // write branch
+    switch (w0, w1, w2, w3, w4, w5, w6, w7)
+    br retry_cycle
+
+w0:
+    ldloc l0
+    ldloc ctlresult
+    stloc l0
+    stloc ctlresult
+
+#ifdef FUNC_GE_2
+    br retry_cycle
+
+w1:
+    ldloc l1
+    ldloc ctlresult
+    stloc l1
+    stloc ctlresult
+    
+#ifdef FUNC_GE_4
+    br retry_cycle
+
+w2:
+    ldloc l2
+    ldloc ctlresult
+    stloc l2
+    stloc ctlresult
+    br retry_cycle
+w3:
+    ldloc l3
+    ldloc ctlresult
+    stloc l3
+    stloc ctlresult
+
+#ifdef FUNC_GE_8
+    br retry_cycle
+
+w4:
+    ldloc l4
+    ldloc ctlresult
+    stloc l4
+    stloc ctlresult
+    br retry_cycle
+w5:
+    ldloc l5
+    ldloc ctlresult
+    stloc l5
+    stloc ctlresult
+    br retry_cycle
+w6:
+    ldloc l6
+    ldloc ctlresult
+    stloc l6
+    stloc ctlresult
+    br retry_cycle
+w7:
+    ldloc l7
+    ldloc ctlresult
+    stloc l7
+    stloc ctlresult
+#else
+w4:
+w5:
+w6:
+w7:
+#endif
+#else
+w2:
+w3:
+w4:
+w5:
+w6:
+w7:
+#endif
+#else
+w1:
+w2:
+w3:
+w4:
+w5:
+w6:
+w7:
+#endif
+
+    br retry_cycle
+
+control_1: // control value 1: allocate a 1-slot frame
+#ifdef FUNC_ALLOC1
+    ldarg header
+    call void FUNC_ALLOC1 (valuetype PinnedRefHandle.IlHelpers.ListHeader* header)
+    br retry_cycle
+#endif
+
+control_2: // control value 2: allocate a 2-slot frame
+#ifdef FUNC_ALLOC2
+    ldarg header
+    call void FUNC_ALLOC2 (valuetype PinnedRefHandle.IlHelpers.ListHeader* header)
+    br retry_cycle
+#endif
+
+control_3: // control value 3: allocate a 4-slot frame
+#ifdef FUNC_ALLOC4
+    ldarg header
+    call void FUNC_ALLOC4 (valuetype PinnedRefHandle.IlHelpers.ListHeader* header)
+    br retry_cycle
+#endif
+
+control_4: // control value 4: allocate a 8-slot frame
+#ifdef FUNC_ALLOC8
+    ldarg header
+    call void FUNC_ALLOC8 (valuetype PinnedRefHandle.IlHelpers.ListHeader* header)
+    br retry_cycle
+#endif
+
+retry_cycle:
+    br control;
+    
+control_0: // control value 0: free the stack frame, return upward
+    // before exiting, clean the locals
+    
+    ldc.i4.0
+    conv.u
+    stloc l0
+
+#ifdef FUNC_GE_2
+    ldc.i4.0
+    conv.u
+    stloc l1
+
+#ifdef FUNC_GE_4
+    ldc.i4.0
+    conv.u
+    stloc l2
+
+    ldc.i4.0
+    conv.u
+    stloc l3
+#ifdef FUNC_GE_8
+    ldc.i4.0
+    conv.u
+    stloc l4
+
+    ldc.i4.0
+    conv.u
+    stloc l5
+
+    ldc.i4.0
+    conv.u
+    stloc l6
+
+    ldc.i4.0
+    conv.u
+    stloc l7
+#endif
+#endif
+#endif
+
+    ret
+
+} // end of FUNC_DEF_NAME
