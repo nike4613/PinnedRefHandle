@@ -93,24 +93,19 @@ control:
     // then the status
     ldloca slotmod
 
-    // and the input ref
-    ldloc ctlresult
-
     // finally, the entrypoint
     ldarg header
     ldfld method int8& *(
         valuetype PinnedRefHandle.IlHelpers.ListHeader*, // header
         int32, // slot count
-        valuetype PinnedRefHandle.IlHelpers.ControlStatus&, // out status
-        int8& // in ref
+        valuetype PinnedRefHandle.IlHelpers.ControlStatus& // out status
         ) PinnedRefHandle.IlHelpers.ListHeader::ControlFunc
 
     // and make the calli
     calli int8& (
         valuetype PinnedRefHandle.IlHelpers.ListHeader*, // header
         int32, // slot count
-        valuetype PinnedRefHandle.IlHelpers.ControlStatus&, // out status
-        int8& // in ref
+        valuetype PinnedRefHandle.IlHelpers.ControlStatus& // out status
         )
     stloc ctlresult
     
@@ -214,61 +209,45 @@ write:
     br retry_cycle
 
 w0:
-    ldloc l0
     ldloc ctlresult
     stloc l0
-    stloc ctlresult
 
 #ifdef FUNC_GE_2
     br retry_cycle
 
 w1:
-    ldloc l1
     ldloc ctlresult
     stloc l1
-    stloc ctlresult
     
 #ifdef FUNC_GE_4
     br retry_cycle
 
 w2:
-    ldloc l2
     ldloc ctlresult
     stloc l2
-    stloc ctlresult
     br retry_cycle
 w3:
-    ldloc l3
     ldloc ctlresult
     stloc l3
-    stloc ctlresult
 
 #ifdef FUNC_GE_8
     br retry_cycle
 
 w4:
-    ldloc l4
     ldloc ctlresult
     stloc l4
-    stloc ctlresult
     br retry_cycle
 w5:
-    ldloc l5
     ldloc ctlresult
     stloc l5
-    stloc ctlresult
     br retry_cycle
 w6:
-    ldloc l6
     ldloc ctlresult
     stloc l6
-    stloc ctlresult
     br retry_cycle
 w7:
-    ldloc l7
     ldloc ctlresult
     stloc l7
-    stloc ctlresult
 #else
 w4:
 w5:

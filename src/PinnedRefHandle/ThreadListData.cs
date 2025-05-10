@@ -117,8 +117,7 @@ internal sealed unsafe class ThreadListData
     private static ref sbyte StorageControl(
         ListHeader* header,
         int frameSize,
-        ref ControlStatus status,
-        ref sbyte inValue
+        ref ControlStatus status
         )
     {
         var data = *(ThreadListData*)header->Data;

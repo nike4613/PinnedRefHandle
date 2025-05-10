@@ -23,8 +23,7 @@
     .field public method int8& *(
         valuetype PinnedRefHandle.IlHelpers.ListHeader*, // header
         int32, // slot count
-        valuetype PinnedRefHandle.IlHelpers.ControlStatus&, // out status
-        int8& // in ref
+        valuetype PinnedRefHandle.IlHelpers.ControlStatus& // out status
         ) ControlFunc
 
     .field public void* Data
