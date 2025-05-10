@@ -23,6 +23,14 @@
     #endif
     )
 
+    // zero locals
+    ldc.i4.0
+    conv.u
+    stloc ctlresult
+
+    ldc.i4.0
+    stloc slotmod
+
     // prepare the pinned locals
     ldc.i4.0
     conv.u
