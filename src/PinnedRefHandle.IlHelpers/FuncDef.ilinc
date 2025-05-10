@@ -112,99 +112,21 @@ control:
     ldloc slotmod
     // now, do something based on the calli result
     switch (control_0, control_1, control_2, control_3, control_4)
-
-    // check for a modify (read/write)
+    
+    // the flag is 1, check for write
     ldloc slotmod
     ldc.i4 0x40000000
     and
     ldc.i4.0
     ceq
-    brtrue retry_cycle // the flag is 0, jump back up immediately
-    
+    brtrue retry_cycle // if the flag is set, go to the write branch
+
+write:
+    // write branch
     // load the index on the base of the stack
     ldloc slotmod
     ldc.i4 0xff
     and
-
-    // the flag is 1, check for read or write
-    ldloc slotmod
-    ldc.i4 0x60000000
-    and
-    ldc.i4.0
-    ceq
-    brfalse write // if the flag is set, go to the write branch
-
-    // read branch
-    switch (r0, r1, r2, r3, r4, r5, r6, r7)
-    br retry_cycle
-
-r0:
-    ldloc l0
-    stloc ctlresult
-
-#ifdef FUNC_GE_2
-    br retry_cycle
-
-r1:
-    ldloc l1
-    stloc ctlresult
-    
-#ifdef FUNC_GE_4
-    br retry_cycle
-
-r2:
-    ldloc l2
-    stloc ctlresult
-    br retry_cycle
-r3:
-    ldloc l3
-    stloc ctlresult
-
-#ifdef FUNC_GE_8
-    br retry_cycle
-
-r4:
-    ldloc l4
-    stloc ctlresult
-    br retry_cycle
-r5:
-    ldloc l5
-    stloc ctlresult
-    br retry_cycle
-r6:
-    ldloc l6
-    stloc ctlresult
-    br retry_cycle
-r7:
-    ldloc l7
-    stloc ctlresult
-#else
-r4:
-r5:
-r6:
-r7:
-#endif
-#else
-r2:
-r3:
-r4:
-r5:
-r6:
-r7:
-#endif
-#else
-r1:
-r2:
-r3:
-r4:
-r5:
-r6:
-r7:
-#endif
-
-    br retry_cycle
-write:
-    // write branch
     switch (w0, w1, w2, w3, w4, w5, w6, w7)
     br retry_cycle
 
