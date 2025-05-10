@@ -7,4 +7,10 @@ public static unsafe class PinManager
     public static object AddPin(void* addr)
         => ThreadListData.InterlockedInitialize(ref lazyThread).AddPin(addr);
 
+    public static void RemovePin(object pin)
+    {
+        using var mre = new ManualResetEventSlim();
+        ThreadListData.RemovePin(pin, mre);
+        mre.Wait();
+    }
 }

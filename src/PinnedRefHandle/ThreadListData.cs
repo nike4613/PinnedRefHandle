@@ -159,6 +159,7 @@ internal sealed unsafe class ThreadListData
                     }
 
                     // if we've fallen out here, we've cleared this frame out and should deallocate it
+                    data.Capacity -= frameSize;
                     status = ControlStatus.FreeFrame;
                     return ref Unsafe.NullRef<sbyte>();
                 }
