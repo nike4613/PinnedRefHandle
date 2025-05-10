@@ -43,6 +43,7 @@ internal sealed unsafe class ThreadListData
     private bool IsRemoving;
 
     private ThreadListData? AuxList;
+    private ThreadListData? ContinueList;
 
     private RemoveRecord RemoveTarget;
 
@@ -197,11 +198,27 @@ internal sealed unsafe class ThreadListData
                 {
                     // a new frame needs to be allocated
 
+                    if (!RuntimeHelpers.TryEnsureSufficientExecutionStack())
+                    {
+                        // there's not enough stack! push to another thread
+
+                        // prefer the AuxList if it has spare space available
+                        if (data.AuxList is { HasSpace: true } list)
+                        {
+                            list.AddChannel.Add(addRecord);
+                            list.EventsAvailable.Set();
+                            continue;
+                        }
+
+                        // otherwise, push to the continuation list
+                        var list2 = InterlockedInitialize(ref data.ContinueList);
+                        list2.AddChannel.Add(addRecord);
+                        list2.EventsAvailable.Set();
+                        continue;
+                    }
+
                     // make sure we add the record back to the bag
                     data.AddChannel.Add(addRecord);
-
-                    // TODO: check for sufficient stack, and push handling over to a continuation if there's not enough
-                    // or alternately, to the aux list if it has space
                     data.AddingFrame = true;
                     data.ThisFrameEmptySlots = 0;
                     status = ControlStatus.Alloc4;
@@ -224,43 +241,52 @@ internal sealed unsafe class ThreadListData
             }
 
             // then, handle taking ownership
-            while (data.TakeOwnChannel.TryTake(out var tuple))
+            while (data.TakeOwnChannel.TryTake(out var takeOwn))
             {
                 if (countInThisFrame >= frameSize)
                 {
                     // to take ownership, we need to allocate frames
-                    data.TakeOwnChannel.Add(tuple); // add the item back if we need to retry
 
-                    // TODO: check for sufficient stack, and push handling to a continuation thread if there's not enough
-                    // UNLIKE the ADD case, NEVER go to the aux list, because we just came from that
+                    if (!RuntimeHelpers.TryEnsureSufficientExecutionStack())
+                    {
+                        // there's not enough stack! push to another thread
+
+                        // do NOT push to the aux list, as this probably came from there. We need to instead push off to the continuation.
+                        var list2 = InterlockedInitialize(ref data.ContinueList);
+                        list2.TakeOwnChannel.Add(takeOwn);
+                        list2.EventsAvailable.Set();
+                        continue;
+                    }
+
+                    data.TakeOwnChannel.Add(takeOwn); // add the item back if we need to retry
                     data.AddingFrame = true;
                     status = ControlStatus.Alloc4;
                     return ref Unsafe.NullRef<sbyte>();
                 }
 
                 // we have space, try to take ownership
-                lock (tuple.Handle)
+                lock (takeOwn.Handle)
                 {
-                    if (tuple.Handle.OwningList != tuple.From)
+                    if (takeOwn.Handle.OwningList != takeOwn.From)
                     {
                         // someone else got to this first, don't mess up their bookkeeping
                         continue;
                     }
 
                     // slot the handle in place
-                    tuple.Handle.OwningList = data;
-                    tuple.Handle.Index = capacityInOldFrames + countInThisFrame;
-                    data.Owned.Add(tuple.Handle);
+                    takeOwn.Handle.OwningList = data;
+                    takeOwn.Handle.Index = capacityInOldFrames + countInThisFrame;
+                    data.Owned.Add(takeOwn.Handle);
                     data.Count++;
                     Debug.Assert(data.Count <= data.Capacity);
                     Debug.Assert(data.Count == data.Owned.Count);
 
                     // record the pending reset event
-                    data.PendingResetEvent = tuple.MRE;
+                    data.PendingResetEvent = takeOwn.MRE;
 
                     // then finally, perform the write
                     status = ControlStatus.FlagWrite | (ControlStatus)countInThisFrame;
-                    return ref Unsafe.AsRef<sbyte>((void*)tuple.Handle.Ptr);
+                    return ref Unsafe.AsRef<sbyte>((void*)takeOwn.Handle.Ptr);
                 }
             }
 
